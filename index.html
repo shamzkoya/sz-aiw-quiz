@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How AI-Ready Is Your Business? — Social Zip</title>
+<meta name="description" content="Take the 90-second quiz and get your AI-Readiness score, your business persona, and your fastest next move. By Social Zip, Durban." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --teal: oklch(0.75 0.12 180); --teal-fb:#3FBFBF;
+    --teal-light: oklch(0.95 0.04 180);
+    --teal-dark: oklch(0.55 0.12 180); --teal-dark-fb:#1F8A8A;
+    --navy: oklch(0.21 0.034 264.665); --navy-fb:#1a2233;
+    --body-text: oklch(0.35 0.015 65); --muted:#64748B;
+    --white:#fff; --offwhite:#f8f9fa; --surface:#f4f7f8;
+    --border: oklch(0.93 0.004 286);
+    --coral:#FF6B47; --coral-dark:#e8542f;
+    --success:#10B981; --warning:#F59E0B; --danger:#EF4444;
+    --font-head:'Fraunces', Georgia, serif;
+    --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --xs:.25rem; --sm:.5rem; --md:1rem; --lg:1.5rem; --xl:2rem; --2xl:3rem;
+    --radius:16px; --radius-sm:10px; --maxw:600px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--white);color:var(--body-text);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+
+  /* progress */
+  .progress-wrap{position:fixed;top:0;left:0;right:0;height:5px;background:var(--border);z-index:100}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--teal-dark));transition:width .45s ease}
+
+  /* screens */
+  .screen{display:none;min-height:100vh;min-height:100dvh;padding:var(--xl) var(--lg);flex-direction:column;align-items:center;justify-content:center}
+  .screen.active{display:flex;animation:fadeIn .45s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .inner{width:100%;max-width:var(--maxw);margin:0 auto;text-align:center}
+
+  .brand-logo{height:34px;width:auto;margin:0 auto var(--xl)}
+  .eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:var(--md)}
+
+  h1.q-head{font-family:var(--font-head);font-weight:900;font-size:clamp(1.9rem,6vw,3rem);line-height:1.08;letter-spacing:-.02em;color:var(--navy);margin-bottom:var(--md)}
+  h1.q-head em{font-style:normal;background:linear-gradient(120deg,var(--teal-dark),var(--teal));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{font-size:clamp(1rem,2.6vw,1.2rem);color:var(--muted);max-width:460px;margin:0 auto var(--xl)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:var(--font-body);font-weight:700;cursor:pointer;border:none;border-radius:var(--radius-sm);transition:transform .15s ease,box-shadow .15s ease,background .15s ease;text-decoration:none}
+  .btn-primary{background:var(--coral);color:#fff;padding:1rem 2rem;font-size:1.08rem;min-height:56px;box-shadow:0 6px 18px rgba(255,107,71,.32)}
+  .btn-primary:hover{background:var(--coral-dark);transform:translateY(-2px);box-shadow:0 10px 26px rgba(255,107,71,.4)}
+  .meta-line{margin-top:var(--md);font-size:.85rem;color:var(--muted)}
+  .meta-line strong{color:var(--navy)}
+
+  /* question */
+  .q-num{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:var(--md)}
+  .question-text{font-family:var(--font-head);font-weight:700;font-size:clamp(1.4rem,4.2vw,2rem);line-height:1.22;color:var(--navy);margin-bottom:var(--xl)}
+  .answers{display:flex;flex-direction:column;gap:.6rem;width:100%;max-width:480px;margin:0 auto;text-align:left}
+  .answer{display:flex;align-items:center;gap:.85rem;width:100%;padding:1rem 1.15rem;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:1rem;font-weight:500;color:var(--navy);transition:all .18s ease;min-height:56px;font-family:var(--font-body);line-height:1.35}
+  .answer:hover{border-color:var(--teal);background:var(--teal-light);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+  .answer.selected{border-color:var(--teal-dark);background:var(--teal-dark);color:#fff}
+  .answer .ltr{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:var(--teal-dark);background:#fff;transition:all .18s ease}
+  .answer.selected .ltr{background:#fff;color:var(--teal-dark);border-color:#fff}
+
+  /* gate */
+  .gate-icon{font-size:2.6rem;margin-bottom:var(--md);animation:pulse 2s ease infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .teaser{display:inline-flex;flex-direction:column;align-items:center;gap:.3rem;background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:1rem 1.6rem;margin:0 auto var(--xl)}
+  .teaser .blur{font-family:var(--font-head);font-weight:900;font-size:2.6rem;color:var(--navy);filter:blur(9px);user-select:none}
+  .teaser .cap{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .form{width:100%;max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:.7rem;text-align:left}
+  .field label{font-size:.82rem;font-weight:600;color:var(--navy);display:block;margin-bottom:.25rem}
+  .input{width:100%;padding:.85rem 1rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:var(--font-body);outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+  .input:focus{border-color:var(--teal-dark);box-shadow:0 0 0 3px rgba(31,138,138,.14)}
+  .input.error{border-color:var(--danger);animation:shake .3s ease}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .err-msg{color:var(--danger);font-size:.78rem;margin-top:.2rem;display:none}
+  .input.error ~ .err-msg{display:block}
+  .privacy{font-size:.76rem;color:var(--muted);text-align:center;margin-top:.4rem}
+  .gate-submit{margin-top:.4rem;width:100%}
+
+  /* results */
+  .ring-wrap{position:relative;width:180px;height:180px;margin:0 auto var(--lg)}
+  .ring-wrap svg{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:var(--border);stroke-width:14}
+  .ring-fg{fill:none;stroke:var(--teal-dark);stroke-width:14;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.2,.8,.2,1)}
+  .ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-num .n{font-family:var(--font-head);font-weight:900;font-size:3rem;color:var(--navy);line-height:1}
+  .ring-num .d{font-size:.8rem;color:var(--muted);font-weight:600}
+  .persona-badge{display:inline-block;font-family:var(--font-head);font-weight:900;font-size:clamp(1.5rem,5vw,2.2rem);color:var(--navy);margin-bottom:.4rem;animation:badge .8s cubic-bezier(.175,.885,.32,1.275) both}
+  @keyframes badge{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+  .persona-tag{font-size:.95rem;color:var(--teal-dark);font-weight:700;margin-bottom:var(--md)}
+  .result-desc{font-size:1.02rem;color:var(--body-text);max-width:500px;margin:0 auto var(--xl)}
+  .recs{display:flex;flex-direction:column;gap:.7rem;max-width:520px;margin:0 auto var(--xl);text-align:left}
+  .rec{display:flex;gap:.85rem;background:var(--surface);border-left:4px solid var(--teal-dark);border-radius:var(--radius-sm);padding:1rem 1.1rem}
+  .rec .num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--teal-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem}
+  .rec p{font-size:.95rem;color:var(--body-text);margin:0}
+  .rec strong{color:var(--navy)}
+
+  .cta{background:linear-gradient(155deg,var(--navy),var(--teal-dark));color:#fff;border-radius:var(--radius);padding:var(--2xl) var(--lg);max-width:560px;margin:0 auto;text-align:center}
+  .cta h2{font-family:var(--font-head);font-weight:900;font-size:clamp(1.5rem,4.5vw,2.1rem);line-height:1.12;margin-bottom:var(--sm)}
+  .cta p{opacity:.92;font-size:1rem;max-width:420px;margin:0 auto var(--lg)}
+  .cta .badge-date{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:.35rem 1rem;font-size:.82rem;font-weight:700;letter-spacing:.04em;margin-bottom:var(--md)}
+  .cta .btn-primary{box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .cta-sec{display:block;margin-top:var(--md);font-size:.86rem;color:rgba(255,255,255,.85)}
+  .cta-sec a{color:#fff;text-decoration:underline}
+  .share{margin-top:var(--lg);font-size:.85rem;color:var(--muted)}
+  .share a{color:var(--teal-dark);font-weight:600;cursor:pointer;text-decoration:underline}
+
+  .footer{text-align:center;padding:var(--xl) var(--lg) var(--2xl);color:var(--muted);font-size:.8rem}
+  .footer img{height:24px;opacity:.45;margin:0 auto var(--sm)}
+  .footer a{color:var(--muted)}
+
+  .net-notice{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--warning);color:#fff;padding:.6rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;z-index:200;display:none}
+
+  @media (max-width:640px){
+    .screen{padding:var(--lg) var(--md)}
+    .answers{margin-top:auto}
+    .ring-wrap{width:150px;height:150px}
+    .ring-num .n{font-size:2.5rem}
+  }
+</style>
+</head>
+<body>
+<div class="progress-wrap"><div class="progress-fill" id="progress"></div></div>
+
+<!-- INTRO -->
+<section class="screen active" id="screen-intro">
+  <div class="inner">
+    <img class="brand-logo" src="https://lp.socialzip.co.za/social-zip-logo.png" alt="Social Zip" />
+    <div class="eyebrow">Durban · 90-second quiz</div>
+    <h1 class="q-head">How <em>AI-ready</em> is your business?</h1>
+    <p class="sub">7 quick questions. Get your AI-Readiness score, your business persona, and the one move that'll move the needle fastest.</p>
+    <button class="btn btn-primary" onclick="startQuiz()">Get my score →</button>
+    <div class="meta-line">No jargon. No tech skills needed. Built by a working AI agency in <strong>Durban</strong>.</div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="screen" id="screen-quiz">
+  <div class="inner">
+    <div class="q-num" id="q-num">Question 1 of 7</div>
+    <div class="question-text" id="q-text"></div>
+    <div class="answers" id="q-answers"></div>
+  </div>
+</section>
+
+<!-- GATE -->
+<section class="screen" id="screen-gate">
+  <div class="inner">
+    <div class="gate-icon">🔓</div>
+    <h1 class="q-head" style="font-size:clamp(1.6rem,5vw,2.3rem)">Your results are ready.</h1>
+    <p class="sub">We've scored your answers and built your personalised next step. Where should we send it?</p>
+    <div class="teaser"><span class="blur">8/10</span><span class="cap">Your score + persona</span></div>
+    <form class="form" id="gate-form" novalidate>
+      <div class="field">
+        <label for="f-name">First name</label>
+        <input class="input" id="f-name" type="text" autocomplete="given-name" placeholder="Your first name" />
+        <div class="err-msg">Please enter your first name.</div>
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input class="input" id="f-email" type="email" autocomplete="email" placeholder="you@business.co.za" />
+        <div class="err-msg">Please enter a valid email.</div>
+      </div>
+      <div class="field">
+        <label for="f-phone">Mobile (WhatsApp)</label>
+        <input class="input" id="f-phone" type="tel" autocomplete="tel" placeholder="071 234 5678" />
+        <div class="err-msg">Please enter your mobile number.</div>
+      </div>
+      <div class="field">
+        <label for="f-biz">Business name</label>
+        <input class="input" id="f-biz" type="text" autocomplete="organization" placeholder="Your business" />
+        <div class="err-msg">Please enter your business name.</div>
+      </div>
+      <button class="btn btn-primary gate-submit" type="submit">See my score →</button>
+      <p class="privacy">We'll send your results and occasional Social Zip tips. No spam — unsubscribe anytime.</p>
+    </form>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="screen" id="screen-results">
+  <div class="inner">
+    <div class="ring-wrap">
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle class="ring-bg" cx="90" cy="90" r="76"></circle>
+        <circle class="ring-fg" id="ring-fg" cx="90" cy="90" r="76" stroke-dasharray="477" stroke-dashoffset="477"></circle>
+      </svg>
+      <div class="ring-num"><span class="n" id="score-num">0</span><span class="d">out of 10</span></div>
+    </div>
+    <div class="persona-badge" id="persona-name"></div>
+    <div class="persona-tag" id="persona-tag"></div>
+    <p class="result-desc" id="result-desc"></p>
+    <div class="recs" id="recs"></div>
+
+    <div class="cta">
+      <div class="badge-date">⚡ Live on Zoom · Saturday 13 June</div>
+      <h2 id="cta-head">Turn your score into a real business — in one day.</h2>
+      <p id="cta-desc">The AI Business Workshop is 8 hours, hands-on. You walk out with your idea, your customer profile, your AI clone, a live website, a marketing plan and 30 posts. Done <em>with</em> you.</p>
+      <a class="btn btn-primary" id="cta-btn" href="#" target="_blank" rel="noopener">Save my seat — 13 June →</a>
+      <span class="cta-sec">Want to dip a toe first? <a id="taster-link" href="#" target="_blank" rel="noopener">Join the free taster session</a>.</span>
+    </div>
+
+    <div class="share">Know a business owner who needs this? <a onclick="shareResult()">Share the quiz →</a></div>
+  </div>
+</section>
+
+<div class="footer">
+  <img src="https://lp.socialzip.co.za/social-zip-logo.png" alt="Social Zip" />
+  <p>Social Zip · Durban · <a href="mailto:shamimah@socialzip.co.za">shamimah@socialzip.co.za</a></p>
+</div>
+
+<div class="net-notice" id="net-notice">Saving your results…</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ CONFIG — fill these before launch ============ */
+  var CONFIG = {
+    quizTitle: "How AI-Ready Is Your Business?",
+    // PASTE the GHL Inbound Webhook URL here (Automations > Workflows > Inbound Webhook trigger):
+    ghlWebhookUrl: "",                                   // [PASTE_GHL_WEBHOOK_URL]
+    // Primary CTA (works now — real R1,997 workshop payment link):
+    workshopUrl: "https://crm.socialzip.co.za/payment-link/6a1971f503b17c94f571384f",
+    // Free taster registration link (set when ready; falls back to WhatsApp if left blank):
+    tasterUrl: "",                                       // [PASTE_TASTER_REGISTRATION_URL]
+    whatsapp: "https://wa.me/27797327231?text=Hi%20Social%20Zip%2C%20I%20just%20did%20the%20AI-readiness%20quiz%20and%20want%20to%20join%20the%20free%20taster"
+  };
+  /* =========================================================== */
+
+  var QUESTIONS = [
+    { q:"If a customer Googled your business right now, what would they find?",
+      a:[["Honestly? Almost nothing — I'm invisible online",1],
+         ["A Facebook page and not much else",2],
+         ["A website, but it's tired and outdated",3],
+         ["A solid site that actually brings me enquiries",4]] },
+    { q:"How clearly can you describe your ideal customer?",
+      a:[["Anyone who'll pay me, really",1],
+         ["I've got a rough idea",2],
+         ["I know them fairly well",3],
+         ["In my sleep — and I know where to find them",4]] },
+    { q:"How often do you actually market your business?",
+      a:[["When I remember… so, rarely",1],
+         ["In random bursts",2],
+         ["Semi-regularly",3],
+         ["Consistently, with a plan",4]] },
+    { q:"When it's time to post or write something, you…",
+      a:[["Freeze — I never know what to say",1],
+         ["Stare at a blank screen, then copy a competitor",2],
+         ["Eventually get something out",3],
+         ["Have a system that makes it easy",4]] },
+    { q:"Where are you with AI tools like ChatGPT?",
+      a:[["Never touched them — feels overwhelming",1],
+         ["Tried once or twice, didn't stick",2],
+         ["I use them now and then",3],
+         ["I use them in my work most days",4]] },
+    { q:"How much time each week do you lose to admin AI could handle?",
+      a:[["Hours — I'm drowning in it",1],
+         ["A fair chunk",2],
+         ["Some, but I cope",3],
+         ["Very little — I'm pretty efficient",4]] },
+    { q:"Be honest — how do you feel about using AI in YOUR business?",
+      a:[["It's not for someone like me",1],
+         ["Curious, but nervous",2],
+         ["Keen — I just need direction",3],
+         ["Confident — bring it on",4]] }
+  ];
+
+  // raw score range 7..28 → display /10. Tiers by raw.
+  var TIERS = [
+    { min:7, max:13, name:"The Hidden Gem", tag:"Great business — but the world can't find you yet",
+      desc:"You've got something real, but online you're practically invisible. Here's the good news: that means the fastest wins are still ahead of you. One focused day could put you further than the last year did.",
+      recs:[
+        ["Get visible.","A live website is step one — and you'll build yours in the workshop, not 'someday'."],
+        ["Get clear.","We map exactly who your customer is, so you finally know what to say and to whom."],
+        ["Get moving.","Walk out with 30 ready-to-post pieces so marketing stops being a blank screen."]
+      ] },
+    { min:14, max:20, name:"The Scattered Hustler", tag:"You're doing the work — it just isn't pulling together",
+      desc:"You've got pieces in motion, but nothing's connected into a system. The gap isn't effort — it's leverage. Let's turn your hustle into a setup that runs without you holding every string.",
+      recs:[
+        ["Connect the dots.","Website, message and customer profile built into one working setup in a day."],
+        ["Build your AI clone.","An AI that writes in your voice, so content stops eating your week."],
+        ["Plan the next 90 days.","Leave with a marketing plan + 30 posts, not just good intentions."]
+      ] },
+    { min:21, max:28, name:"The Ready Riser", tag:"You're ahead of most — now it's about leverage",
+      desc:"You're already further than most business owners. The opportunity now isn't catching up — it's using AI to do in hours what used to take days, and look bigger than you are.",
+      recs:[
+        ["Sharpen the engine.","Tighten your site, message and customer profile so they actually convert."],
+        ["Automate the grind.","Build an AI clone + workflows that hand you back hours every week."],
+        ["Scale your output.","30 posts + a plan so your marketing finally matches your ambition."]
+      ] }
+  ];
+
+  var state = { current:0, answers:{}, raw:0, score10:0, tier:null };
+
+  /* ---- Version B (pre-captured: ?cid=) ---- */
+  function isVersionB(){ return new URLSearchParams(location.search).has('cid'); }
+  function getCid(){ return new URLSearchParams(location.search).get('cid') || ''; }
+
+  var screens = document.querySelectorAll('.screen');
+  function show(id){
+    screens.forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  function setProgress(c,t){ document.getElementById('progress').style.width = Math.round((c/t)*100)+'%'; }
+
+  window.startQuiz = function(){ state.current=0; render(); show('screen-quiz'); };
+
+  function render(){
+    var Q = QUESTIONS[state.current], n=state.current;
+    document.getElementById('q-num').textContent = "Question "+(n+1)+" of "+QUESTIONS.length;
+    document.getElementById('q-text').textContent = Q.q;
+    var letters=["A","B","C","D"], wrap=document.getElementById('q-answers');
+    wrap.innerHTML="";
+    Q.a.forEach(function(opt,i){
+      var b=document.createElement('button');
+      b.className="answer"; b.type="button";
+      b.innerHTML='<span class="ltr">'+letters[i]+'</span><span>'+opt[0]+'</span>';
+      b.onclick=function(){ pick(n,i,opt[1],b); };
+      wrap.appendChild(b);
+    });
+    setProgress(n,QUESTIONS.length);
+  }
+
+  function pick(qi,ai,points,el){
+    state.answers["q"+(qi+1)] = String.fromCharCode(97+ai); // a/b/c/d
+    state.answers["_pts"+(qi+1)] = points;
+    var sib=el.parentNode.querySelectorAll('.answer');
+    sib.forEach(function(s){ s.classList.remove('selected'); });
+    el.classList.add('selected');
+    setTimeout(function(){
+      state.current++;
+      if(state.current < QUESTIONS.length){ render(); setProgress(state.current,QUESTIONS.length); }
+      else { compute(); setProgress(QUESTIONS.length,QUESTIONS.length);
+        if(isVersionB()){ submitGHL(); paintResults(); show('screen-results'); animateScore(); }
+        else { show('screen-gate'); }
+      }
+    },300);
+  }
+
+  function compute(){
+    var raw=0;
+    for(var i=1;i<=QUESTIONS.length;i++){ raw += state.answers["_pts"+i]||0; }
+    state.raw=raw;
+    state.score10 = Math.max(1, Math.round(raw/(QUESTIONS.length*4)*10));
+    state.tier = TIERS.filter(function(t){ return raw>=t.min && raw<=t.max; })[0] || TIERS[0];
+  }
+
+  /* ---- gate ---- */
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  document.getElementById('gate-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name=document.getElementById('f-name'), email=document.getElementById('f-email'),
+        phone=document.getElementById('f-phone'), biz=document.getElementById('f-biz');
+    var ok=true;
+    [[name,name.value.trim().length>0],[email,validEmail(email.value.trim())],
+     [phone,phone.value.trim().length>=7],[biz,biz.value.trim().length>0]].forEach(function(p){
+      if(!p[1]){ p[0].classList.add('error'); ok=false; } else { p[0].classList.remove('error'); }
+    });
+    if(!ok) return;
+    state.contact={ firstName:name.value.trim(), email:email.value.trim(), phone:phone.value.trim(), company:biz.value.trim() };
+    submitGHL();
+    paintResults(); show('screen-results'); animateScore();
+  });
+
+  /* ---- results ---- */
+  function paintResults(){
+    var t=state.tier;
+    document.getElementById('persona-name').textContent = t.name;
+    document.getElementById('persona-tag').textContent = t.tag;
+    document.getElementById('result-desc').textContent = t.desc;
+    var recs=document.getElementById('recs'); recs.innerHTML="";
+    t.recs.forEach(function(r,i){
+      var d=document.createElement('div'); d.className="rec";
+      d.innerHTML='<div class="num">'+(i+1)+'</div><p><strong>'+r[0]+'</strong> '+r[1]+'</p>';
+      recs.appendChild(d);
+    });
+    document.getElementById('cta-btn').href = CONFIG.workshopUrl;
+    document.getElementById('taster-link').href = CONFIG.tasterUrl || CONFIG.whatsapp;
+    // color the ring by score
+    var col = state.score10>=8 ? 'var(--success)' : (state.score10>=5 ? 'var(--warning)' : 'var(--coral)');
+    document.getElementById('ring-fg').style.stroke = col;
+  }
+
+  function animateScore(){
+    var target=state.score10, el=document.getElementById('score-num'), dur=1400, t0=null;
+    var circ=2*Math.PI*76, ring=document.getElementById('ring-fg');
+    ring.setAttribute('stroke-dasharray', circ);
+    // set offset directly so the CSS transition animates the fill (no rAF dependency)
+    ring.style.strokeDashoffset = circ - (circ*target/10);
+    function step(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(e*target); if(p<1)requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+    // guaranteed final value even if rAF is throttled/backgrounded
+    setTimeout(function(){ el.textContent=target; }, dur+120);
+  }
+
+  window.shareResult=function(){
+    var url=location.href.split('?')[0];
+    var txt="I just found out my business is \""+(state.tier?state.tier.name:'AI-ready')+"\" — what's yours? Take the 90-sec AI-readiness quiz:";
+    if(navigator.share){ navigator.share({title:CONFIG.quizTitle,text:txt,url:url}).catch(function(){}); }
+    else { navigator.clipboard && navigator.clipboard.writeText(txt+" "+url); alert("Link copied — paste it to a friend!"); }
+  };
+
+  /* ---- GHL webhook (fire-and-forget) ---- */
+  function submitGHL(){
+    if(!CONFIG.ghlWebhookUrl) return;
+    var notice=document.getElementById('net-notice'); notice.style.display='block';
+    setTimeout(function(){ notice.style.display='none'; }, 2200);
+    var b = isVersionB();
+    var answersOnly={}; for(var k in state.answers){ if(k.indexOf('_pts')<0) answersOnly[k]=state.answers[k]; }
+    var payload = {
+      contact_id: b ? getCid() : "",
+      first_name: b ? "" : (state.contact?state.contact.firstName:""),
+      email:      b ? "" : (state.contact?state.contact.email:""),
+      phone:      b ? "" : (state.contact?state.contact.phone:""),
+      company:    b ? "" : (state.contact?state.contact.company:""),
+      aiw_quiz_score: state.score10,
+      quiz_score_raw: state.raw,
+      aiw_quiz_persona: state.tier?state.tier.name:"",
+      aiw_quiz_answers: JSON.stringify(answersOnly),
+      lead_magnet_name: CONFIG.quizTitle,
+      source: b ? "facebook_lead_form" : "organic",
+      completed_at: new Date().toISOString()
+    };
+    try{
+      fetch(CONFIG.ghlWebhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload),mode:'no-cors'});
+    }catch(err){ /* never block results */ }
+  }
+
+  /* Version B: skip intro, go straight into questions */
+  if(isVersionB()){ startQuiz(); }
+})();
+</script>
+</body>
+</html>

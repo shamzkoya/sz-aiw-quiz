@@ -428,7 +428,7 @@
     };
     try{
       fetch(CONFIG.ghlWebhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload),mode:'no-cors'});
+        body:JSON.stringify(payload)});
     }catch(err){ /* never block results */ }
   }
 

@@ -195,11 +195,13 @@
     <div class="recs" id="recs"></div>
 
     <div class="cta">
-      <div class="badge-date">⚡ Live on Zoom · Saturday 20 June</div>
-      <h2 id="cta-head">Turn your score into a real business — in one day.</h2>
-      <p id="cta-desc">The AI Business Workshop is 8 hours, hands-on. You walk out with your idea, your customer profile, your AI clone, a live website, a marketing plan and 30 posts. Done <em>with</em> you.</p>
-      <a class="btn btn-primary" id="cta-btn" href="#" target="_blank" rel="noopener">See dates and book my seat →</a>
-      <span class="cta-sec">Want to dip a toe first? <a id="taster-link" href="#" target="_blank" rel="noopener">Join the free taster session</a>.</span>
+      <div class="badge-date" id="badge-date">⚡ Live on Zoom</div>
+      <h2 id="cta-head">Turn your score into action.</h2>
+      <p id="cta-desc">Pick your next step: join the free live class on Zoom, or book the full one-day hands-on AI Business Workshop. You walk out with your idea, your AI clone, a live website, a marketing plan and 30 posts.</p>
+      <a class="btn btn-primary" id="free-class-btn" style="cursor:pointer">Reserve my FREE class seat →</a>
+      <p id="free-class-done" style="display:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:.8rem 1rem;font-weight:700;max-width:420px;margin:0 auto"></p>
+      <a class="btn" id="cta-btn" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:var(--md);background:transparent;color:#fff;border:2px solid rgba(255,255,255,.55)">Book a full workshop date (from R997) →</a>
+      <span class="cta-sec">Your quiz results stay with your registration, so the class meets you at your score.</span>
     </div>
 
     <div class="share">Know a business owner who needs this? <a onclick="shareResult()">Share the quiz →</a></div>
@@ -379,7 +381,10 @@
       recs.appendChild(d);
     });
     document.getElementById('cta-btn').href = CONFIG.workshopUrl;
-    document.getElementById('taster-link').href = CONFIG.tasterUrl || CONFIG.whatsapp;
+    var fcd = nextFreeClass();
+    document.getElementById('badge-date').textContent = "⚡ Free class live on Zoom · " + fcd + " · 7PM";
+    document.getElementById('free-class-btn').textContent = "Reserve my FREE class seat (" + fcd + ") →";
+    document.getElementById('free-class-btn').addEventListener('click', registerFreeClass);
     // color the ring by score
     var col = state.score10>=8 ? 'var(--success)' : (state.score10>=5 ? 'var(--warning)' : 'var(--coral)');
     document.getElementById('ring-fg').style.stroke = col;
@@ -404,6 +409,57 @@
     if(navigator.share){ navigator.share({title:CONFIG.quizTitle,text:txt,url:url}).catch(function(){}); }
     else { navigator.clipboard && navigator.clipboard.writeText(txt+" "+url); alert("Link copied — paste it to a friend!"); }
   };
+
+  /* ---- Free class: next date + one-click registration ---- */
+  // Free class runs every OTHER Thursday 19:00 SAST, anchored 23 Jul 2026.
+  var FREE_CLASS_HOOK = "https://services.leadconnectorhq.com/hooks/T3m7W3pB3ukKW1DzDa6i/webhook-trigger/832156c3-91f4-440e-b20a-370f52ab0ded";
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function nextFreeClassDate(){
+    var d = new Date("2026-07-23T19:00:00+02:00");
+    var now = new Date();
+    while (d <= now) d = new Date(d.getTime() + 14*86400000);
+    return d;
+  }
+  function nextFreeClass(){
+    var d = nextFreeClassDate();
+    return "Thu " + d.getDate() + " " + MONTHS[d.getMonth()];
+  }
+  function registerFreeClass(){
+    var c = state.contact;
+    // Version B (came from ad, no contact captured here) → send to the sign-up page instead.
+    if (!c || !c.email) { window.open(CONFIG.tasterUrl || CONFIG.whatsapp, "_blank"); return; }
+    var btn = document.getElementById('free-class-btn');
+    if (btn.dataset.busy) return;
+    btn.dataset.busy = "1";
+    btn.textContent = "Saving your seat…";
+    var name = (c.firstName || "").trim();
+    var payload = {
+      name: name, first_name: name, full_name: name,
+      email: c.email, phone: c.phone || "",
+      source: "free-class-register",
+      lead_magnet_name: "AI Business Free Class",
+      registered_for: "AI Business Free Class - every Thursday 7PM",
+      via: "ai-readiness-quiz",
+      aiw_quiz_score: state.score10,
+      aiw_quiz_persona: state.tier ? state.tier.name : "",
+      completed_at: new Date().toISOString()
+    };
+    fetch(FREE_CLASS_HOOK, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) })
+      .then(function(r){ if(!r.ok) throw new Error(r.status); showFreeClassDone(); })
+      .catch(function(){
+        // Webhook hiccup: don't lose the lead — fall through to the sign-up page.
+        delete btn.dataset.busy;
+        btn.textContent = "Reserve my FREE class seat (" + nextFreeClass() + ") →";
+        window.open(CONFIG.tasterUrl || CONFIG.whatsapp, "_blank");
+      });
+  }
+  function showFreeClassDone(){
+    var btn = document.getElementById('free-class-btn');
+    var done = document.getElementById('free-class-done');
+    btn.style.display = "none";
+    done.style.display = "block";
+    done.textContent = "✓ Seat booked for " + nextFreeClass() + " at 7PM. Check your email for the Zoom link.";
+  }
 
   /* ---- GHL webhook (fire-and-forget) ---- */
   function submitGHL(){
